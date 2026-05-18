@@ -12,8 +12,6 @@ const introLoadingScreen = document.getElementById("introLoadingScreen");
 const homeScreen = document.getElementById("homeScreen");
 const profileCard = document.getElementById("profileCard");
 const profileName = document.getElementById("profileName");
-const homeBackBtn = document.getElementById("homeBackBtn");
-const homeShareBtn = document.getElementById("homeShareBtn");
 const ALL_SCREENS = [introLoadingScreen, profileScreen, loadingScreen, homeScreen];
 
 function showOnlyScreen(targetScreen) {
@@ -60,38 +58,3 @@ if (profileCard) {
   });
 }
 
-if (homeBackBtn) {
-  homeBackBtn.addEventListener("click", () => {
-    showOnlyScreen(profileScreen);
-  });
-}
-
-async function shareSite() {
-  const shareData = {
-    title: document.title || "LOVEFLIX",
-    text: "Come and relive these memories with us!",
-    url: window.location.href
-  };
-
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      return;
-    } catch (error) {
-      if (error?.name === "AbortError") return;
-    }
-  }
-
-  try {
-    await navigator.clipboard.writeText(shareData.url);
-    window.alert("Link copied. You can paste and share it.");
-  } catch (error) {
-    window.prompt("Copy this link to share:", shareData.url);
-  }
-}
-
-if (homeShareBtn) {
-  homeShareBtn.addEventListener("click", () => {
-    shareSite();
-  });
-}
