@@ -1,0 +1,58 @@
+:root {
+  --bg-black: #0a0a0a;
+  --bg-netflix: #141414;
+  --text-primary: #ffffff;
+  --text-muted: #a3a3a3;
+  --card-hover: #ffffff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+}
+
+body {
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--bg-netflix);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  width: 100%;
+  min-height: 100dvh;
+  transition: opacity 260ms ease;
+}
+
+.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>LOVEFLIX | Profile Selection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./src/css/base.css" />
+  <link rel="stylesheet" href="./src/css/profile-screen.css" />
+  <link rel="stylesheet" href="./src/css/loading-screen.css" />
+  <link rel="stylesheet" href="./src/css/home-screen.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="screen intro-loading-screen" id="introLoadingScreen" aria-live="polite">
+      <h1 class="intro-logo">LOVEFLIX</h1>
+      <p class="intro-loading-text">Loading the Anniversary Season...</p>
+      <div class="intro-loading-bar" aria-hidden="true"><span></span></div>
+    </section>
+
+    <section class="screen profile-screen is-hidden" id="profileScreen" aria-labelledby="title">
+      <div class="masthead">
+        <img class="masthead-image" src="./images/1.jpeg" alt="Anniversary masthead" />
+        <div class="masthead-fade" aria-hidden="true"></div>
+      </div>
+
+      <div class="profile-bottom">
+        <h1 class="title" id="title">Who's Watching?</h1>
+        <button class="single-profile-card" id="profileCard" aria-label="Select profile">
+          <img class="profile-image" src="./download.png" alt="Profile image" />
+          <span class="profile-name" id="profileName" contenteditable="true" spellcheck="false">Vinod&Sunita</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="screen loading-screen is-hidden" id="loadingScreen" aria-live="polite">
+      <img class="loading-profile-image" src="./download.png" alt="Selected profile" />
+      <div class="netflix-loader" aria-hidden="true"></div>
+      <p class="loading-text">Opening profile...</p>
+    </section>
+
+    <section class="screen home-screen is-hidden" id="homeScreen" aria-label="Memories home">
+      <header class="home-header">
+        <div class="home-brand">LOVEFLIX</div>
+        <div class="home-header-icons">
+          <button class="header-icon-btn" aria-label="Search">⌕</button>
+          <button class="header-icon-btn" aria-label="Downloads">⇩</button>
+        </div>
+      </header>
+
+      <article class="hero-card">
+        <img class="hero-image" id="heroImage" src="./images/2.jpeg" alt="Featured memory" />
+        <video
+          class="hero-image hero-video"
+          id="heroVideo"
+          playsinline
+          loop
+          muted
+          preload="metadata"
+          hidden
+        ></video>
+        <div class="hero-overlay">
+          <h2 class="hero-title" id="heroTitle">Forever &amp; Always</h2>
+          <p class="hero-subtitle" id="heroSubtitle">30 Years of Love, Laughter &amp; Memories</p>
+          <div class="hero-tags" id="heroTags"></div>
+          <p class="hero-description" id="heroDescription">
+            A beautiful journey of love, resilience, friendship and countless unforgettable memories.
+          </p>
+          <div class="hero-actions">
+            <button class="hero-action hero-action-primary" id="heroPlayBtn">▶ Play</button>
+          </div>
+        </div>
+      </article>
+
+      <section class="home-rows" id="homeRows" aria-label="Memory carousels"></section>
+
+      <footer class="home-footer" aria-label="Home actions">
+        <button class="home-footer-btn" id="homeBackBtn" type="button">← Back</button>
+        <button class="home-footer-btn" id="homeShareBtn" type="button">➦ Share</button>
+      </footer>
+    </section>
+  </main>
+
+  <script type="module" src="./src/js/main.js"></script>
+</body>
+</html>
