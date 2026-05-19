@@ -5,6 +5,38 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+.scroll-glow-top,
+.scroll-glow-bottom {
+  pointer-events: none;
+  position: sticky;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.scroll-glow-top {
+  top: 0;
+  box-shadow: 0 0 40px 18px rgba(229, 9, 20, 0.45);
+}
+
+.scroll-glow-bottom {
+  bottom: 0;
+  box-shadow: 0 0 40px 18px rgba(229, 9, 20, 0.35);
+}
+
+.scroll-glow-top.active {
+  opacity: 1;
+}
+
+.scroll-glow-bottom.active {
+  opacity: 1;
 }
 
 .home-header {
@@ -58,10 +90,12 @@
   object-fit: cover;
   display: block;
   transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
 }
 
 .hero-image.zoom-active {
-  animation: heroSlowZoom 8s ease-in-out infinite alternate;
+  animation: heroZoom 6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 .hero-video {
@@ -80,7 +114,7 @@
   position: absolute;
   inset: auto 0 0;
   padding: 0.95rem;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.18));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.14));
 }
 
 .hero-title {
@@ -132,6 +166,25 @@
   font-weight: 600;
   min-width: 55%;
   max-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.hero-action-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  background: currentColor;
+  display: inline-block;
+}
+
+.hero-action-icon.is-play {
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.hero-action-icon.is-pause {
+  clip-path: polygon(0 0, 35% 0, 35% 100%, 0 100%, 0 0, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 0);
 }
 
 .hero-action-primary {
@@ -149,6 +202,7 @@
 .carousel-section {
   margin-top: 0.65rem;
   margin-bottom: 0;
+  will-change: transform, opacity;
 }
 
 .carousel-title {
@@ -186,11 +240,12 @@
   overflow: hidden;
   scroll-snap-align: start;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: transform 180ms ease;
+  transition: transform 220ms ease, opacity 300ms ease;
+  will-change: transform, opacity;
 }
 
 .carousel-item:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
 }
 
 .carousel-item img {
@@ -201,11 +256,11 @@
   display: block;
 }
 
-@keyframes heroSlowZoom {
+@keyframes heroZoom {
   0% {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.07);
+    transform: scale(1.2);
   }
 }

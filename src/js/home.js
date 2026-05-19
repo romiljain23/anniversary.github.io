@@ -54,10 +54,25 @@ export function setupHomeScreen() {
   const heroTags = document.getElementById("heroTags");
   const homeRows = document.getElementById("homeRows");
   const heroPlayBtn = document.getElementById("heroPlayBtn");
+  const heroPlayIcon = document.getElementById("heroPlayIcon");
+  const heroPlayLabel = document.getElementById("heroPlayLabel");
 
   if (!heroImage || !heroVideo || !homeRows) return;
 
   let currentHeroIsVideo = false;
+  let imageZoomPaused = false;
+
+  const updatePlayButton = (isPlaying) => {
+    if (heroPlayIcon) {
+      heroPlayIcon.classList.toggle("is-play", !isPlaying);
+      heroPlayIcon.classList.toggle("is-pause", isPlaying);
+    }
+    if (heroPlayLabel) {
+      heroPlayLabel.textContent = isPlaying ? "Pause" : "Play";
+    } else if (heroPlayBtn) {
+      heroPlayBtn.textContent = isPlaying ? "Pause" : "Play";
+    }
+  };
 
   const setHeroMedia = async (src, shouldAutoplayVideo = false) => {
     const mediaIsVideo = isVideo(src);
@@ -71,12 +86,12 @@ export function setupHomeScreen() {
       if (shouldAutoplayVideo) {
         try {
           await heroVideo.play();
-          if (heroPlayBtn) heroPlayBtn.textContent = "⏸ Pause";
+          updatePlayButton(true);
         } catch (error) {
-          if (heroPlayBtn) heroPlayBtn.textContent = "▶ Play";
+          updatePlayButton(false);
         }
-      } else if (heroPlayBtn) {
-        heroPlayBtn.textContent = "▶ Play";
+      } else {
+        updatePlayButton(false);
       }
       return;
     }
@@ -89,7 +104,9 @@ export function setupHomeScreen() {
     heroImage.classList.remove("zoom-active");
     void heroImage.offsetWidth;
     heroImage.classList.add("zoom-active");
-    if (heroPlayBtn) heroPlayBtn.textContent = "▶ Play";
+    imageZoomPaused = false;
+    heroImage.style.animationPlayState = "running";
+    updatePlayButton(true);
   };
 
   setHeroMedia(HOME_CONTENT.heroMedia, false);
@@ -114,18 +131,22 @@ export function setupHomeScreen() {
 
   if (heroPlayBtn) {
     heroPlayBtn.addEventListener("click", async () => {
-      if (!currentHeroIsVideo) return;
-
-      if (heroVideo.paused) {
-        try {
-          await heroVideo.play();
-          heroPlayBtn.textContent = "⏸ Pause";
-        } catch (error) {
-          heroPlayBtn.textContent = "▶ Play";
+      if (currentHeroIsVideo) {
+        if (heroVideo.paused) {
+          try {
+            await heroVideo.play();
+            updatePlayButton(true);
+          } catch (error) {
+            updatePlayButton(false);
+          }
+        } else {
+          heroVideo.pause();
+          updatePlayButton(false);
         }
       } else {
-        heroVideo.pause();
-        heroPlayBtn.textContent = "▶ Play";
+        imageZoomPaused = !imageZoomPaused;
+        heroImage.style.animationPlayState = imageZoomPaused ? "paused" : "running";
+        updatePlayButton(!imageZoomPaused);
       }
     });
   }

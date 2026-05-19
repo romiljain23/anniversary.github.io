@@ -5,6 +5,7 @@ import {
   showLoadingScreen
 } from "./ui.js";
 import { setupHomeScreen } from "./home.js";
+import { setupScrollEffects } from "./scroll-effects.js";
 
 const profileScreen = document.getElementById("profileScreen");
 const loadingScreen = document.getElementById("loadingScreen");
@@ -38,6 +39,7 @@ if (profileName) {
 window.addEventListener("DOMContentLoaded", () => {
   try {
     setupHomeScreen();
+    setupScrollEffects();
   } catch (error) {
     // Keep app usable even if home setup fails.
   }

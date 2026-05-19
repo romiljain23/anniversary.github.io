@@ -42,6 +42,7 @@
     </section>
 
     <section class="screen home-screen is-hidden" id="homeScreen" aria-label="Memories home">
+      <div class="scroll-glow-top" id="scrollGlowTop" aria-hidden="true"></div>
       <header class="home-header">
         <div class="home-brand">LOVEFLIX</div>
         <div class="home-header-icons">
@@ -69,12 +70,16 @@
             A beautiful journey of love, resilience, friendship and countless unforgettable memories.
           </p>
           <div class="hero-actions">
-            <button class="hero-action hero-action-primary" id="heroPlayBtn">▶ Play</button>
+            <button class="hero-action hero-action-primary" id="heroPlayBtn" type="button">
+              <span class="hero-action-icon is-play" id="heroPlayIcon" aria-hidden="true"></span>
+              <span class="hero-action-label" id="heroPlayLabel">Play</span>
+            </button>
           </div>
         </div>
       </article>
 
       <section class="home-rows" id="homeRows" aria-label="Memory carousels"></section>
+      <div class="scroll-glow-bottom" id="scrollGlowBottom" aria-hidden="true"></div>
     </section>
   </main>
 
