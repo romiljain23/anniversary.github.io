@@ -1,6 +1,7 @@
 const GLOW_THRESHOLD = 10;
 const GLOW_FADE_MS = 600;
 const PARALLAX_FACTOR = 0.035;
+const EDGE_BOUNCE_THRESHOLD = 6;
 
 export function setupScrollEffects() {
   const screen = document.getElementById("homeScreen");
@@ -13,6 +14,16 @@ export function setupScrollEffects() {
   let topTimer = 0;
   let bottomTimer = 0;
   let ticking = false;
+  let lastScrollY = screen.scrollTop;
+  let wasAtTop = screen.scrollTop <= EDGE_BOUNCE_THRESHOLD;
+  let wasAtBottom = false;
+
+  function triggerEdgeBounce(edge) {
+    const className = edge === "top" ? "edge-bounce-top" : "edge-bounce-bottom";
+    screen.classList.remove(className);
+    void screen.offsetWidth;
+    screen.classList.add(className);
+  }
 
   function clearGlow(el, timerRef) {
     if (!el) return 0;
@@ -27,6 +38,9 @@ export function setupScrollEffects() {
     requestAnimationFrame(() => {
       const scrollY = screen.scrollTop;
       const maxScroll = screen.scrollHeight - screen.clientHeight;
+      const deltaY = scrollY - lastScrollY;
+      const atTop = scrollY <= EDGE_BOUNCE_THRESHOLD;
+      const atBottom = scrollY >= maxScroll - EDGE_BOUNCE_THRESHOLD;
 
       if (glowTop) {
         if (scrollY <= GLOW_THRESHOLD) {
@@ -40,6 +54,14 @@ export function setupScrollEffects() {
           glowBottom.classList.add("active");
           bottomTimer = clearGlow(glowBottom, bottomTimer);
         }
+      }
+
+      if (atTop && !wasAtTop && deltaY < 0) {
+        triggerEdgeBounce("top");
+      }
+
+      if (atBottom && !wasAtBottom && deltaY > 0) {
+        triggerEdgeBounce("bottom");
       }
 
       if (heroCard) {
@@ -61,6 +83,9 @@ export function setupScrollEffects() {
         }
       });
 
+      wasAtTop = atTop;
+      wasAtBottom = atBottom;
+      lastScrollY = scrollY;
       ticking = false;
     });
   }
