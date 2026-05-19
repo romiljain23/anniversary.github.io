@@ -1,11 +1,15 @@
 .home-screen {
   background: #070707;
   min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
   padding: 0.2rem 0.45rem max(0.35rem, env(safe-area-inset-bottom));
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
   position: relative;
 }
 
