@@ -27,6 +27,12 @@ fi
 echo "Staging all changes..."
 git add .
 
+echo "Syncing with remote ${BRANCH}..."
+git fetch "https://${GIT_PAT_TOKEN}@github.com/${GITHUB_OWNER}/${GITHUB_REPO}.git" "${BRANCH}"
+if git show-ref --verify --quiet "refs/remotes/origin/${BRANCH}"; then
+  git rebase "origin/${BRANCH}"
+fi
+
 if git diff --cached --quiet; then
   echo "No staged changes to commit. Pushing latest ${BRANCH}..."
   git push "https://${GIT_PAT_TOKEN}@github.com/${GITHUB_OWNER}/${GITHUB_REPO}.git" "${BRANCH}"
