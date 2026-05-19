@@ -3,7 +3,7 @@ export const APP_CONFIG = {
 };
 
 export const HOME_CONTENT = {
-  heroMedia: "./images/2.jpeg",
+  heroMedia: "./hero-video.mp4",
   heroTitle: "Forever & Always",
   heroSubtitle: "30 Years of Love, Laughter & Memories",
   heroDescription:

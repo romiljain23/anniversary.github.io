@@ -12,8 +12,19 @@ const loadingScreen = document.getElementById("loadingScreen");
 const introLoadingScreen = document.getElementById("introLoadingScreen");
 const homeScreen = document.getElementById("homeScreen");
 const profileCard = document.getElementById("profileCard");
+const profileImage = document.querySelector(".profile-image");
 const profileName = document.getElementById("profileName");
 const ALL_SCREENS = [introLoadingScreen, profileScreen, loadingScreen, homeScreen];
+const profileClickSound = new Audio("./audio/netflix_profile_click.mp3");
+
+profileClickSound.preload = "auto";
+
+function playProfileClickSound() {
+  profileClickSound.currentTime = 0;
+  profileClickSound.play().catch(() => {
+    // Ignore play interruptions; click flow should continue.
+  });
+}
 
 function showOnlyScreen(targetScreen) {
   ALL_SCREENS.forEach((screen) => {
@@ -36,9 +47,11 @@ if (profileName) {
   });
 }
 
+let homeHandle = null;
+
 window.addEventListener("DOMContentLoaded", () => {
   try {
-    setupHomeScreen();
+    homeHandle = setupHomeScreen();
     setupScrollEffects();
   } catch (error) {
     // Keep app usable even if home setup fails.
@@ -56,7 +69,12 @@ if (profileCard) {
 
     window.setTimeout(() => {
       showOnlyScreen(homeScreen);
+      if (homeHandle) homeHandle.startHeroVideo();
     }, APP_CONFIG.loadingDurationMs);
   });
+}
+
+if (profileImage) {
+  profileImage.addEventListener("click", playProfileClickSound);
 }
 

@@ -4,7 +4,7 @@ const VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".m4v", ".mov"];
 
 function isVideo(src) {
   const lower = src.toLowerCase();
-  return VIDEO_EXTENSIONS.some((extension) => lower.endsWith(extension));
+  return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext));
 }
 
 function getItemSource(item) {
@@ -12,18 +12,11 @@ function getItemSource(item) {
   return item?.src || "";
 }
 
-function getItemType(item) {
-  if (typeof item === "object" && item?.type) return item.type;
-  return isVideo(getItemSource(item)) ? "video" : "image";
-}
-
 function createCarouselItem(item, index) {
   const src = getItemSource(item);
-  const type = getItemType(item);
   const card = document.createElement("article");
   card.className = "carousel-item";
   card.dataset.mediaSrc = src;
-  card.dataset.mediaType = type;
   card.innerHTML = `<img src="${src}" alt="Memory ${index + 1}" loading="lazy" />`;
   return card;
 }
@@ -46,8 +39,8 @@ function createRowSection(row, rowIndex) {
 }
 
 export function setupHomeScreen() {
-  const heroImage = document.getElementById("heroImage");
   const heroVideo = document.getElementById("heroVideo");
+  const heroOverlay = document.querySelector(".hero-overlay");
   const heroTitle = document.getElementById("heroTitle");
   const heroSubtitle = document.getElementById("heroSubtitle");
   const heroDescription = document.getElementById("heroDescription");
@@ -57,59 +50,26 @@ export function setupHomeScreen() {
   const heroPlayIcon = document.getElementById("heroPlayIcon");
   const heroPlayLabel = document.getElementById("heroPlayLabel");
 
-  if (!heroImage || !heroVideo || !homeRows) return;
+  if (!heroVideo || !homeRows) return null;
 
-  let currentHeroIsVideo = false;
-  let imageZoomPaused = false;
+  let soundOn = false;
+  let autoplayTimerId = 0;
 
-  const updatePlayButton = (isPlaying) => {
+  const setOverlayHidden = (hidden) => {
+    if (heroOverlay) heroOverlay.classList.toggle("is-cinematic", hidden);
+  };
+
+  const updateButton = (playing) => {
     if (heroPlayIcon) {
-      heroPlayIcon.classList.toggle("is-play", !isPlaying);
-      heroPlayIcon.classList.toggle("is-pause", isPlaying);
+      heroPlayIcon.classList.toggle("is-play", !playing);
+      heroPlayIcon.classList.toggle("is-pause", playing);
     }
     if (heroPlayLabel) {
-      heroPlayLabel.textContent = isPlaying ? "Pause" : "Play";
-    } else if (heroPlayBtn) {
-      heroPlayBtn.textContent = isPlaying ? "Pause" : "Play";
+      heroPlayLabel.textContent = playing ? "Pause" : "Play";
     }
   };
 
-  const setHeroMedia = async (src, shouldAutoplayVideo = false) => {
-    const mediaIsVideo = isVideo(src);
-    currentHeroIsVideo = mediaIsVideo;
-
-    if (mediaIsVideo) {
-      heroImage.classList.remove("zoom-active");
-      heroImage.hidden = true;
-      heroVideo.hidden = false;
-      heroVideo.src = src;
-      if (shouldAutoplayVideo) {
-        try {
-          await heroVideo.play();
-          updatePlayButton(true);
-        } catch (error) {
-          updatePlayButton(false);
-        }
-      } else {
-        updatePlayButton(false);
-      }
-      return;
-    }
-
-    heroVideo.pause();
-    heroVideo.hidden = true;
-    heroVideo.removeAttribute("src");
-    heroImage.hidden = false;
-    heroImage.src = src;
-    heroImage.classList.remove("zoom-active");
-    void heroImage.offsetWidth;
-    heroImage.classList.add("zoom-active");
-    imageZoomPaused = false;
-    heroImage.style.animationPlayState = "running";
-    updatePlayButton(true);
-  };
-
-  setHeroMedia(HOME_CONTENT.heroMedia, false);
+  updateButton(false);
 
   if (heroTitle) heroTitle.textContent = HOME_CONTENT.heroTitle;
   if (heroSubtitle) heroSubtitle.textContent = HOME_CONTENT.heroSubtitle;
@@ -130,33 +90,60 @@ export function setupHomeScreen() {
   });
 
   if (heroPlayBtn) {
-    heroPlayBtn.addEventListener("click", async () => {
-      if (currentHeroIsVideo) {
+    heroPlayBtn.addEventListener("click", () => {
+      clearTimeout(autoplayTimerId);
+
+      if (!soundOn) {
+        heroVideo.muted = false;
+        heroVideo.removeAttribute("muted");
+        heroVideo.volume = 1.0;
+
         if (heroVideo.paused) {
-          try {
-            await heroVideo.play();
-            updatePlayButton(true);
-          } catch (error) {
-            updatePlayButton(false);
-          }
-        } else {
-          heroVideo.pause();
-          updatePlayButton(false);
+          heroVideo.play().catch(() => {});
         }
+
+        soundOn = true;
+        setOverlayHidden(true);
+        updateButton(true);
       } else {
-        imageZoomPaused = !imageZoomPaused;
-        heroImage.style.animationPlayState = imageZoomPaused ? "paused" : "running";
-        updatePlayButton(!imageZoomPaused);
+        heroVideo.muted = true;
+        heroVideo.setAttribute("muted", "");
+        soundOn = false;
+        setOverlayHidden(false);
+        updateButton(false);
       }
     });
   }
 
+  heroVideo.addEventListener("click", () => {
+    if (soundOn && heroPlayBtn) {
+      heroPlayBtn.click();
+    }
+  });
+
   homeRows.addEventListener("click", (event) => {
     const card = event.target.closest(".carousel-item");
     if (!card) return;
-
     const src = card.dataset.mediaSrc;
-    const type = card.dataset.mediaType;
-    setHeroMedia(src, type === "video");
+    if (isVideo(src)) {
+      heroVideo.src = src;
+      heroVideo.muted = true;
+      heroVideo.setAttribute("muted", "");
+      soundOn = false;
+      setOverlayHidden(false);
+      updateButton(false);
+      heroVideo.play().catch(() => {});
+    }
   });
+
+  return {
+    startHeroVideo() {
+      autoplayTimerId = setTimeout(() => {
+        if (soundOn) return;
+        heroVideo.muted = true;
+        heroVideo.setAttribute("muted", "");
+        heroVideo.play().catch(() => {});
+      }, 1500);
+    }
+  };
 }

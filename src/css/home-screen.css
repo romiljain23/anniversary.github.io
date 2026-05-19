@@ -91,37 +91,19 @@
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 9 / 16;
   max-height: min(66dvh, 610px);
-  background: #111;
+  background: #000;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
 }
 
-.hero-image {
+.hero-media {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transform: scale(1);
-  transform-origin: center center;
-  will-change: transform;
-}
-
-.hero-image.zoom-active {
-  animation: heroZoom 6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-}
-
-.hero-video {
-  animation: none !important;
-  transform: none !important;
   background: #000;
-}
-
-.hero-video[hidden],
-.media-viewer-image[hidden],
-.media-viewer-video[hidden] {
-  display: none !important;
 }
 
 .hero-overlay {
@@ -170,6 +152,30 @@
   font-size: 0.79rem;
   line-height: 1.35;
 }
+
+.hero-title,
+.hero-subtitle,
+.hero-tags,
+.hero-description {
+  transition: opacity 220ms ease, transform 220ms ease, max-height 220ms ease, margin 220ms ease;
+}
+
+.hero-overlay.is-cinematic {
+  background: transparent;
+}
+
+.hero-overlay.is-cinematic .hero-title,
+.hero-overlay.is-cinematic .hero-subtitle,
+.hero-overlay.is-cinematic .hero-tags,
+.hero-overlay.is-cinematic .hero-description {
+  opacity: 0;
+  transform: translateY(8px);
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 
 .hero-actions {
   display: flex;
@@ -274,14 +280,6 @@
   display: block;
 }
 
-@keyframes heroZoom {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.2);
-  }
-}
 
 @keyframes edgeBounceTop {
   0% {
