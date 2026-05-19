@@ -3,7 +3,7 @@
   min-height: 100dvh;
   height: 100dvh;
   max-height: 100dvh;
-  padding: 0.2rem 0.45rem max(0.35rem, env(safe-area-inset-bottom));
+  padding: 0 0.45rem max(0.35rem, env(safe-area-inset-bottom));
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -58,7 +58,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: max(0.85rem, env(safe-area-inset-top)) 0.35rem 0.6rem;
+  padding: env(safe-area-inset-top) 0.35rem 0.6rem;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.08));
   backdrop-filter: blur(5px);
 }
