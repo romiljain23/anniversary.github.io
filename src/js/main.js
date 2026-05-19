@@ -47,11 +47,9 @@ if (profileName) {
   });
 }
 
-let homeHandle = null;
-
 window.addEventListener("DOMContentLoaded", () => {
   try {
-    homeHandle = setupHomeScreen();
+    setupHomeScreen();
     setupScrollEffects();
   } catch (error) {
     // Keep app usable even if home setup fails.
@@ -69,7 +67,6 @@ if (profileCard) {
 
     window.setTimeout(() => {
       showOnlyScreen(homeScreen);
-      if (homeHandle) homeHandle.startHeroVideo();
     }, APP_CONFIG.loadingDurationMs);
   });
 }

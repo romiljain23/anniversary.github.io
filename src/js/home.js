@@ -1,12 +1,5 @@
 import { HOME_CONTENT } from "./config.js";
 
-const VIDEO_EXTENSIONS = [".mp4", ".webm", ".ogg", ".m4v", ".mov"];
-
-function isVideo(src) {
-  const lower = src.toLowerCase();
-  return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext));
-}
-
 function getItemSource(item) {
   if (typeof item === "string") return item;
   return item?.src || "";
@@ -39,6 +32,7 @@ function createRowSection(row, rowIndex) {
 }
 
 export function setupHomeScreen() {
+  const heroImage = document.getElementById("heroImage");
   const heroVideo = document.getElementById("heroVideo");
   const heroOverlay = document.querySelector(".hero-overlay");
   const heroTitle = document.getElementById("heroTitle");
@@ -50,10 +44,9 @@ export function setupHomeScreen() {
   const heroPlayIcon = document.getElementById("heroPlayIcon");
   const heroPlayLabel = document.getElementById("heroPlayLabel");
 
-  if (!heroVideo || !homeRows) return null;
+  if (!homeRows) return null;
 
-  let soundOn = false;
-  let autoplayTimerId = 0;
+  let videoPlaying = false;
 
   const setOverlayHidden = (hidden) => {
     if (heroOverlay) heroOverlay.classList.toggle("is-cinematic", hidden);
@@ -68,6 +61,52 @@ export function setupHomeScreen() {
       heroPlayLabel.textContent = playing ? "Pause" : "Play";
     }
   };
+
+  function showImage(src) {
+    if (heroVideo) {
+      heroVideo.pause();
+      heroVideo.hidden = true;
+    }
+    if (heroImage) {
+      heroImage.src = src;
+      heroImage.hidden = false;
+      heroImage.classList.remove("zoom-active");
+      void heroImage.offsetWidth;
+      heroImage.classList.add("zoom-active");
+    }
+    videoPlaying = false;
+    setOverlayHidden(false);
+    updateButton(false);
+  }
+
+  function playVideo() {
+    if (!heroVideo) return;
+    if (heroImage) {
+      heroImage.classList.remove("zoom-active");
+      heroImage.hidden = true;
+    }
+    heroVideo.hidden = false;
+    heroVideo.muted = false;
+    heroVideo.removeAttribute("muted");
+    heroVideo.volume = 1.0;
+    heroVideo.currentTime = 0;
+    heroVideo.play().catch(() => {});
+    videoPlaying = true;
+    setOverlayHidden(true);
+    updateButton(true);
+  }
+
+  function stopVideo() {
+    if (!heroVideo) return;
+    heroVideo.pause();
+    heroVideo.hidden = true;
+    heroVideo.muted = true;
+    heroVideo.setAttribute("muted", "");
+    if (heroImage) heroImage.hidden = false;
+    videoPlaying = false;
+    setOverlayHidden(false);
+    updateButton(false);
+  }
 
   updateButton(false);
 
@@ -91,59 +130,27 @@ export function setupHomeScreen() {
 
   if (heroPlayBtn) {
     heroPlayBtn.addEventListener("click", () => {
-      clearTimeout(autoplayTimerId);
-
-      if (!soundOn) {
-        heroVideo.muted = false;
-        heroVideo.removeAttribute("muted");
-        heroVideo.volume = 1.0;
-
-        if (heroVideo.paused) {
-          heroVideo.play().catch(() => {});
-        }
-
-        soundOn = true;
-        setOverlayHidden(true);
-        updateButton(true);
+      if (!videoPlaying) {
+        playVideo();
       } else {
-        heroVideo.muted = true;
-        heroVideo.setAttribute("muted", "");
-        soundOn = false;
-        setOverlayHidden(false);
-        updateButton(false);
+        stopVideo();
       }
     });
   }
 
-  heroVideo.addEventListener("click", () => {
-    if (soundOn && heroPlayBtn) {
-      heroPlayBtn.click();
-    }
-  });
+  if (heroVideo) {
+    heroVideo.addEventListener("click", () => {
+      if (videoPlaying) stopVideo();
+    });
+  }
 
   homeRows.addEventListener("click", (event) => {
     const card = event.target.closest(".carousel-item");
     if (!card) return;
     const src = card.dataset.mediaSrc;
-    if (isVideo(src)) {
-      heroVideo.src = src;
-      heroVideo.muted = true;
-      heroVideo.setAttribute("muted", "");
-      soundOn = false;
-      setOverlayHidden(false);
-      updateButton(false);
-      heroVideo.play().catch(() => {});
-    }
+    if (videoPlaying) stopVideo();
+    showImage(src);
   });
 
-  return {
-    startHeroVideo() {
-      autoplayTimerId = setTimeout(() => {
-        if (soundOn) return;
-        heroVideo.muted = true;
-        heroVideo.setAttribute("muted", "");
-        heroVideo.play().catch(() => {});
-      }, 1500);
-    }
-  };
+  return null;
 }
