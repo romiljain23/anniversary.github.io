@@ -8,7 +8,7 @@ set -euo pipefail
 # Optional overrides:
 #   GIT_PAT_TOKEN=... GITHUB_OWNER=... GITHUB_REPO=... ./git_push_with_pat.sh "msg"
 
-GIT_PAT_TOKEN="${GIT_PAT_TOKEN:-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}"
+GIT_PAT_TOKEN="${GIT_PAT_TOKEN:-ghp"
 GITHUB_OWNER="${GITHUB_OWNER:-tanishq-m}"
 GITHUB_REPO="${GITHUB_REPO:-anniversary}"
 BRANCH="${BRANCH:-main}"
